@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Math Falling Game</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.6.0/p5.js"></script>
+</head>
+<body>
+<script>
+let questions = [];
+let userInput = "";
+let score = 0;
+
+function setup() {
+  createCanvas(600, 400);
+  textSize(24);
+  generateQuestion();
+}
+
+function draw() {
+  background(255);
+
+  // Draw score and input
+  fill(0, 150, 0);
+  text("Score: " + score, 10, 30);
+
+  fill(200, 0, 0);
+  text("Your Answer: " + userInput, 10, height - 20);
+
+  // Draw questions
+  for (let i = questions.length - 1; i >= 0; i--) {
+    let q = questions[i];
+    fill(0);
+    text(q.text, q.x, q.y);
+    q.y += 1; // falling speed
+
+    if (q.y > height) {
+      questions.splice(i, 1);
+      generateQuestion();
+    }
+  }
+}
+
+function keyPressed() {
+  if (keyCode === ENTER) {
+    for (let i = questions.length - 1; i >= 0; i--) {
+      if (userInput === questions[i].answer) {
+        score++;
+        questions.splice(i, 1);
+        generateQuestion();
+      }
+    }
+    userInput = "";
+  } else if (keyCode === BACKSPACE) {
+    userInput = userInput.slice(0, -1);
+  } else if ((key >= '0' && key <= '9') || key === '-') {
+    userInput += key;
+  }
+}
+
+function generateQuestion() {
+  let a = int(random(1, 10));
+  let b = int(random(1, 10));
+  let ops = ['+', '-']; // kid-friendly (no multiplication)
+  let op = random(ops);
+  let ans;
+  if (op === '+') ans = a + b;
+  else ans = a - b;
+
+  questions.push({
+    text: a + " " + op + " " + b,
+    answer: ans.toString(),
+    x: random(50, width - 100),
+    y: 0
+  });
+}
+</script>
+</body>
+</html>
